@@ -1,6 +1,6 @@
 from langgraph.graph import END, StateGraph
 from langchain_core.messages import BaseMessage
-from Agents.frontend_agent import frontend_agent, frontend_supervisor
+from Agents_langgrapg.frontend_agent import frontend_agent, frontend_supervisor
 from helpers.graph_helpers import agent_node
 from typing import TypedDict, List, Annotated
 import operator

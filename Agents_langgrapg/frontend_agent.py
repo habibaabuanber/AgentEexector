@@ -7,7 +7,7 @@ from helpers.agent_helpers import create_agent, create_team_supervisor
 #from tools.process_img import process_image_file
 from typing import List
 # Initialize the language model
-llm = ChatOpenAI(model="gpt-4o")
+llm = ChatOpenAI(model="gpt-3.5-turbo")
 
 # Define the frontend agent with a suitable prompt template
 frontend_prompt = (
