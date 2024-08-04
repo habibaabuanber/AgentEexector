@@ -17,23 +17,25 @@ class TeamState(TypedDict):
 database_graph = StateGraph(TeamState)
 
 # Add nodes to the database graph
-database_graph.add_node("CodeGenerator",
-                        agent_node(database_agent, "CodeGenerator"))
 database_graph.add_node("DocumentationSearcher",
                         agent_node(database_agent, "DocumentationSearcher"))
+database_graph.add_node("CodeGenerator",
+                        agent_node(database_agent, "CodeGenerator"))
 database_graph.add_node("CodeTester", agent_node(database_agent, "CodeTester"))
 database_graph.add_node("supervisor", database_supervisor)
 
 # Define the edges between nodes
+# database_graph.add_edge("supervisor","DocumentationSearcher")
+database_graph.add_edge("DocumentationSearcher","supervisor")
 database_graph.add_edge("CodeGenerator", "supervisor")
-database_graph.add_edge("DocumentationSearcher", "supervisor")
+# database_graph.add_edge("DocumentationSearcher", "supervisor")
 database_graph.add_edge("CodeTester", "supervisor")
 
 # Add conditional edges for routing
 database_graph.add_conditional_edges(
     "supervisor", lambda x: x["next"], {
-        "CodeGenerator": "CodeGenerator",
         "DocumentationSearcher": "DocumentationSearcher",
+        "CodeGenerator": "CodeGenerator",
         "CodeTester": "CodeTester",
         "FINISH": END,
     })

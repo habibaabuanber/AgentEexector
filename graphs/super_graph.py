@@ -10,7 +10,7 @@ from langgraph.checkpoint.aiosqlite import AsyncSqliteSaver  # Using AsyncSqlite
 import asyncio
 from typing import TypedDict, List, Annotated
 import operator
-
+import re
 # Define the state structure for the top-level supervisor
 class State(TypedDict):
     messages: Annotated[List[BaseMessage], operator.add]
@@ -36,7 +36,7 @@ llm = ChatOpenAI(model="gpt-3.5-turbo")
 
 # Define the top-level supervisor agent with a suitable prompt template
 supervisor_agent = create_team_supervisor(
-    llm, supervisor_prompt, ["FrontendTeam", "BackendTeam", "DatabaseTeam"])
+ llm, supervisor_prompt, ["FrontendTeam", "BackendTeam", "DatabaseTeam"])
 
 # Initialize the top-level graph
 super_graph = StateGraph(State)
@@ -51,6 +51,7 @@ super_graph.add_node("DatabaseTeam",
 super_graph.add_node("supervisor", supervisor_agent)
 
 # Define the edges between nodes
+
 super_graph.add_edge("FrontendTeam", "supervisor")
 super_graph.add_edge("BackendTeam", "supervisor")
 super_graph.add_edge("DatabaseTeam", "supervisor")
@@ -61,33 +62,40 @@ super_graph.add_conditional_edges(
         "FrontendTeam": "FrontendTeam",
         "BackendTeam": "BackendTeam",
         "DatabaseTeam": "DatabaseTeam",
-        "FINISH": END,
-    })
+        "FINISH": END,})
 
 # Set the entry point
 super_graph.set_entry_point("supervisor")
 
 # super_graph.py
 
-async def compile_and_run(user_story: str, file_name: str):
-    # Create the async checkpointer
-    async with AsyncSqliteSaver.from_conn_string(":memory:") as checkpointer:
+async def compile_and_run(user_story:str, file_name: list):
+    # Create the async checkpointerf"HDBf"{file_name[1]}
+    async with AsyncSqliteSaver.from_conn_string("new file.sqlite") as checkpointer:
         # Compile the top-level graph with the checkpointer
         async_super_graph = super_graph.compile(checkpointer=checkpointer)
         
         # Define the input message and configuration
         input_message = HumanMessage(content=f"{user_story}\nFile: {file_name}")
-        config = {"configurable": {"thread_id": "1"}}
-        
+        config = {"configurable": {"thread_id": "3"}}
+       
         # Stream the events asynchronously
-        async for event in async_super_graph.astream_events({"messages": [input_message]}, config, stream_mode="values", version="v1"):
-            print("Received event:", event)  # Debugging: Print the entire event
+        async for event in async_super_graph.astream_events({"messages": [input_message]}, config, stream_mode="updates", version="v1"):
+       
+           
+        # print("Received event:", event)  # Debugging: Print the entire event
+            print (event["data"])
+           
+            # print (,re.split("AI message",event,1))
             if "data" in event and event["data"] is not None:
                 output = event["data"].get("output")
                 if output is not None and isinstance(output, dict) and "messages" in output:
+                    
+                    
                     output["messages"][-1].pretty_print()
-                else:
-                    print("No 'messages' key in event['data']['output']")
+                    
+                # else:
+                #     print("No 'messages' key in event['data']['output']")
             else:
                 print("No 'data' key in event")
 

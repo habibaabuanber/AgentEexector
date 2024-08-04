@@ -17,16 +17,19 @@ class TeamState(TypedDict):
 frontend_graph = StateGraph(TeamState)
 
 # Add nodes to the frontend graph
-frontend_graph.add_node("CodeGenerator",
-                        agent_node(frontend_agent, "CodeGenerator"))
 frontend_graph.add_node("DocumentationSearcher",
                         agent_node(frontend_agent, "DocumentationSearcher"))
+frontend_graph.add_node("CodeGenerator",
+                        agent_node(frontend_agent, "CodeGenerator"))
 frontend_graph.add_node("CodeTester", agent_node(frontend_agent, "CodeTester"))
 frontend_graph.add_node("supervisor", frontend_supervisor)
 
 # Define the edges between nodes
+# frontend_graph.add_edge("DocumentationSearcher","supervisor")
 frontend_graph.add_edge("CodeGenerator", "supervisor")
+# frontend_graph.add_edge("supervisor","DocumentationSearcher")
 frontend_graph.add_edge("DocumentationSearcher", "supervisor")
+# frontend_graph.add_edge("supervisor","CodeTester")
 frontend_graph.add_edge("CodeTester", "supervisor")
 
 # Add conditional edges for routing

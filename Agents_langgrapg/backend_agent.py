@@ -4,17 +4,19 @@ from langchain_openai import ChatOpenAI
 from tools.documentation_searcher_express import tavily_tool, scrape_webpages
 from tools.code_tester import web_code_tester
 from helpers.agent_helpers import create_agent, create_team_supervisor
+#from tools import documentation_searcher_mysql,documentation_searcher_express,documentation_searcher_React
+
 
 # Initialize the language model
 llm = ChatOpenAI(model="gpt-3.5-turbo")
 
 # Define the backend agent with a suitable prompt template
 backend_prompt = (
-    "You are an expert backend developer. Generate code for the provided user story.\n"
-    "Work autonomously according to your specialty, using the tools available to you. "
-    "Do not ask for clarification. Your other team members (and other teams) will collaborate "
+    "according to your specialty, using the tools available to you. "
+    "Do not ask for clarYou are an expert backend developer. Generate the detailed code with all possible functionalities for the provided user story and file path chosen for your role.\n"
+    "Work autonomously ification. Your other team members (and other teams) will collaborate "
     "with you with their own specialties. You are chosen for a reason!")
-backend_agent = create_agent(llm, [tavily_tool, scrape_webpages, web_code_tester],
+backend_agent = create_agent(llm,[tavily_tool, scrape_webpages, web_code_tester],
                              backend_prompt)
 
 # Define the backend supervisor
@@ -25,4 +27,4 @@ backend_supervisor_prompt = (
     "When finished, respond with FINISH.")
 backend_supervisor = create_team_supervisor(
     llm, backend_supervisor_prompt,
-    ["CodeGenerator", "DocumentationSearcher", "CodeTester"])
+    ["DocumentationSearcher","CodeGenerator",  "CodeTester"])

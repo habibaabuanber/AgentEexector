@@ -1,9 +1,11 @@
 from langchain.agents import AgentExecutor, create_openai_functions_agent
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import ChatOpenAI
-from tools.documentation_searcher_mysql import tavily_tool, scrape_webpages
 from tools.code_tester import web_code_tester
 from helpers.agent_helpers import create_agent, create_team_supervisor
+# from tools import documentation_searcher_mysql,documentation_searcher_express,documentation_searcher_React
+from tools.documentation_searcher_mysql import tavily_tool, scrape_webpages
+
 
 # Initialize the language model
 llm = ChatOpenAI(model="gpt-3.5-turbo")
@@ -14,8 +16,8 @@ database_prompt = (
     "Work autonomously according to your specialty, using the tools available to you. "
     "Do not ask for clarification. Your other team members (and other teams) will collaborate "
     "with you with their own specialties. You are chosen for a reason!")
-database_agent = create_agent(llm, [tavily_tool, scrape_webpages, web_code_tester],
-                              database_prompt)
+database_agent = create_agent(llm,[tavily_tool, scrape_webpages, web_code_tester],
+                         database_prompt)
 
 # Define the database supervisor
 database_supervisor_prompt = (
@@ -25,4 +27,4 @@ database_supervisor_prompt = (
     "When finished, respond with FINISH.")
 database_supervisor = create_team_supervisor(
     llm, database_supervisor_prompt,
-    ["CodeGenerator", "DocumentationSearcher", "CodeTester"])
+    ["DocumentationSearcher","CodeGenerator",  "CodeTester"])

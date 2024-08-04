@@ -1,22 +1,27 @@
 from langchain.agents import AgentExecutor, create_openai_functions_agent
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import ChatOpenAI
-from tools.documentation_searcher_React import tavily_tool, scrape_webpages
 from tools.code_tester import web_code_tester
 from helpers.agent_helpers import create_agent, create_team_supervisor
-#from tools.process_img import process_image_file
+#from tools import documentation_searcher_mysql,documentation_searcher_express,documentation_searcher_React
 from typing import List
+from tools.documentation_searcher_React import tavily_tool, scrape_webpages
+
 # Initialize the language model
 llm = ChatOpenAI(model="gpt-3.5-turbo")
 
 # Define the frontend agent with a suitable prompt template
-frontend_prompt = (
-    "You are an expert frontend developer. Generate code for the provided user story and each file related to the user story. "
-    "I need the code generated for the UI to be fancy and awesome with full functionality and interactivity with the right colors and theme.\n"
-    "Work autonomously according to your specialty, using the tools available to you. "
-    "Do not ask for clarification. Your other team members (and other teams) will collaborate "
-    "fill it with the necessary and suitable data to make it rich and realistic for using"
-    "with you with their own specialties. You are chosen for a reason!")
+frontend_prompt = ("As a frontend developer, you play a crucial role in the software development team. Your primary responsibility is to create the visual and interactive aspects of the application, ensuring a seamless user experience."
+"Start by thoroughly reading the provided user story to understand the goal and reason behind the feature. Discuss with the supervisor or product owner to clarify any ambiguities and understand the acceptance criteria."
+"Ensure your project structure is well-organized with separate folders for HTML, CSS, JavaScript, and assets. Determine the appropriate file path for the new feature components."
+"Create the structure of the page using HTML. Style the page using CSS, ensuring the design aligns with the approved mockups and branding guidelines. Add interactivity using JavaScript, making use of the available frameworks and libraries (e.g., React, Vue.js, Angular)."
+"Use JavaScript to fetch data from the backend API and dynamically update the DOM with the received data. Write unit tests for your components to ensure they function correctly. Test the feature across different browsers and devices to ensure compatibility."
+"Minify CSS and JavaScript files, optimize images, and use lazy loading where necessary. Use tools like Lighthouse to audit performance and make improvements."
+"Submit your code for peer review to get feedback and catch any potential issues. Make necessary changes based on feedback to improve code quality. Use Git to commit your changes with meaningful messages."
+"Combine the previous steps to produce well performance code necessary to create the project. Ensure the UI is visually appealing, responsive, and fully functional, with a focus on delivering an exceptional user experience."
+"I need the code generated for the UI to be fancy and awesome with full functionality and interactivity with the right colors and theme.fill it with the necessary and suitable data to make it rich and realistic for using"
+"Remember, you are an expert frontend developer, and you have the autonomy to use your skills and expertise to generate high performance with all possible fuctionalities and themes code. Work confidently and effectively, collaborating with your team members as needed to deliver a successful project."
+    )
 
 # Create the frontend agent with the tavily_tool, scrape_webpages, and web_code_tester tools
 frontend_agent = create_agent(llm,
@@ -34,7 +39,7 @@ frontend_supervisor_prompt = (
 
 frontend_supervisor = create_team_supervisor(
     llm, frontend_supervisor_prompt,
-    ["CodeGenerator", "DocumentationSearcher", "CodeTester"])
+    ["DocumentationSearcher","CodeGenerator",  "CodeTester"])
 
 
 # Example function to simulate a user story being processed by the agent
