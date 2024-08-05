@@ -70,14 +70,14 @@ super_graph.set_entry_point("supervisor")
 # super_graph.py
 
 async def compile_and_run(user_story:str, file_name: list):
-    # Create the async checkpointerf"HDBf"{file_name[1]}
-    async with AsyncSqliteSaver.from_conn_string("new file.sqlite") as checkpointer:
+    # Create the async checkpointerf"HDB
+    async with AsyncSqliteSaver.from_conn_string(f"{file_name[1]}.sqlite") as checkpointer:
         # Compile the top-level graph with the checkpointer
         async_super_graph = super_graph.compile(checkpointer=checkpointer)
         
         # Define the input message and configuration
         input_message = HumanMessage(content=f"{user_story}\nFile: {file_name}")
-        config = {"configurable": {"thread_id": "3"}}
+        config = {"configurable": {"thread_id": "id"}}
        
         # Stream the events asynchronously
         async for event in async_super_graph.astream_events({"messages": [input_message]}, config, stream_mode="updates", version="v1"):
