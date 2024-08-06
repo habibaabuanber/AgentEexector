@@ -1,0 +1,15 @@
+{ "python_version" : "Python 3.12.4" , 
+  "dependencies" :[
+    "./AgentEexector/requirements.txt",
+    "."
+        ],
+"graphs" :{ "super_graph" :"./graphs/super_graph.py:supervisor",
+    "frontend_graph":"./graphs/frontend_graph.py:frontend",
+    "database_graph":"./graphs/database_graph.py:database",
+    "backend_graph":"./graphs/backend_graph.py:backend"
+} ,
+"env":{"env":"./AgentEexector/.env"}
+
+
+
+}
