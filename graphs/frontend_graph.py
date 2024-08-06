@@ -43,3 +43,5 @@ frontend_graph.add_conditional_edges(
 
 # Set the entry point
 frontend_graph.set_entry_point("supervisor")
+frontend_graph.set_finish_point("CodeTester")
+frontend = frontend_graph.compile()

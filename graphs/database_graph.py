@@ -42,3 +42,4 @@ database_graph.add_conditional_edges(
 
 # Set the entry point
 database_graph.set_entry_point("supervisor")
+database=database_graph.compile()

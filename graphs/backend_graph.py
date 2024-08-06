@@ -44,3 +44,5 @@ backend_graph.add_conditional_edges(
 
 # Set the entry point
 backend_graph.set_entry_point("DocumentationSearcher")
+backend_graph.set_finish_point("CodeTester")
+backend = backend_graph.compile()

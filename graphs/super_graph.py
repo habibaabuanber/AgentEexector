@@ -66,21 +66,21 @@ super_graph.add_conditional_edges(
 
 # Set the entry point
 super_graph.set_entry_point("supervisor")
-
+supervisor=super_graph.compile()
 # super_graph.py
 
 async def compile_and_run(user_story:str, file_name: list):
     # Create the async checkpointerf"HDB
     async with AsyncSqliteSaver.from_conn_string(f"{file_name[1]}.sqlite") as checkpointer:
         # Compile the top-level graph with the checkpointer
-        async_super_graph = super_graph.compile(checkpointer=checkpointer)
+        supervisor = super_graph.compile(checkpointer=checkpointer)
         
         # Define the input message and configuration
         input_message = HumanMessage(content=f"{user_story}\nFile: {file_name}")
-        config = {"configurable": {"thread_id": "id"}}
+        config = {"configurable": {"thread_id": "0"}}
        
         # Stream the events asynchronously
-        async for event in async_super_graph.astream_events({"messages": [input_message]}, config, stream_mode="updates", version="v1"):
+        async for event in supervisor.astream_events({"messages": [input_message]}, config, stream_mode="updates", version="v1"):
        
            
         # print("Received event:", event)  # Debugging: Print the entire event
