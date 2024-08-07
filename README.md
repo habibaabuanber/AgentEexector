@@ -51,7 +51,8 @@ Before setting up DevBot, ensure you have the following installed:
    ```plaintext
    PINECONE_API_KEY='2784afd9-3bd4-4047-bc20-6c5941263c7b'
    UPSTASH_REDIS_URL='z_1dWlkIjoiNGVjOGUwNTctZGI0Mi00ZGM5LTlkNjktZGIwMzQzYjI5YzdhIn0.2JlvUT-kCWIDBgTJPDPJb-DV8g0AB-HLi8c3W0GY0pBCZQkaHr3BB00j8DNq73OkCRmlqhWDIchBvjwXqgGRKQ'
-   OPENAI_API_KEY = 'sk-proj-6MgI8vu1AairwrcpJiXYT3BlbkFJ16E0XhMGhqomA3n60z8i'
+   OPENAI_API_KEY ='sk-proj-WLRRciVfHnmCyu0YGOdYT3BlbkFJXzCtlD8Gk5x4yGmjiqwo'
+   TAVILY_API_KEY= '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'
    ```
 
 5. **Run the Application**
