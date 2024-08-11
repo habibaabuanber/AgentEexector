@@ -7,7 +7,7 @@ import os
 OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
 
 # Initialize the language model
-llm = ChatOpenAI(model="gpt-3.5-turbo")
+llm = ChatOpenAI(model="gpt-3.5-turbo",verbose='false')
 
 # Define the top-level supervisor agent with a suitable prompt template
 supervisor_prompt = (
@@ -19,5 +19,25 @@ supervisor_prompt = (
     "make sure that the team responded with the full code of the file passed to them"
     "Make sure using Markdown formatting to display the output "
     "When finished, respond with FINISH.")
-supervisor_agent = create_team_supervisor(
-    llm, supervisor_prompt, ["FrontendTeam", "BackendTeam", "DatabaseTeam"])
+# supervisor_agent = create_team_supervisor(
+#     llm, supervisor_prompt, ["FrontendTeam", "BackendTeam", "DatabaseTeam"])
+
+def supervisor_agent(state: dict) -> dict:
+    """Supervises the frontend agent workflow."""
+    messages = state["messages"]
+
+    # Start with "FrontendTeam"
+    if len(messages) == 1: 
+        return {"next": "FrontendTeam"}
+
+    # Move to "BackendTeam" after "FrontendTeam"
+    elif state.get("next") == "FrontendTeam":
+        return {"next": "BackendTeam"}
+
+    # Finally to "DatabaseTeam", then FINISH
+    elif state.get("next") == "BackendTeam":
+        return {"next": "DatabaseTeam"}
+    
+    else:
+        return {"next": "FINISH"}
+

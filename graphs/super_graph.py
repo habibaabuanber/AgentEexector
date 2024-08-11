@@ -30,7 +30,12 @@ def join_graph(response: dict):
         "team_members": response.get("team_members", ""),
         "next": response.get("next", "")
     }
-
+# def decide_to_end(state):
+#     print(f'Entering in Decide to End')
+#     if state['errors']:
+#         return 'debugger'
+#     else:
+#         return 'end'
 # Initialize the language model
 llm = ChatOpenAI(model="gpt-3.5-turbo")
 
@@ -44,28 +49,30 @@ super_graph = StateGraph(State)
 # Add nodes to the top-level graph
 super_graph.add_node("FrontendTeam",
                      get_last_message | frontend_graph.compile() | join_graph)
+print ("frontend graph wes compiled correctly")
 super_graph.add_node("BackendTeam",
                      get_last_message | backend_graph.compile() | join_graph)
+print("backend graph was compiled")
 super_graph.add_node("DatabaseTeam",
                      get_last_message | database_graph.compile() | join_graph)
 super_graph.add_node("supervisor", supervisor_agent)
 
 # Define the edges between nodes
-
+super_graph.set_entry_point("supervisor")
 super_graph.add_edge("FrontendTeam", "supervisor")
 super_graph.add_edge("BackendTeam", "supervisor")
 super_graph.add_edge("DatabaseTeam", "supervisor")
 
 # Add conditional edges for routing
-super_graph.add_conditional_edges(
-    "supervisor", lambda x: x["next"], {
-        "FrontendTeam": "FrontendTeam",
-        "BackendTeam": "BackendTeam",
-        "DatabaseTeam": "DatabaseTeam",
-        "FINISH": END,})
+# super_graph.add_conditional_edges(
+#     "supervisor", lambda x: x["next"], {
+#         "FrontendTeam": "FrontendTeam",
+#         "BackendTeam": "BackendTeam",
+#         "DatabaseTeam": "DatabaseTeam",
+#         "FINISH": END,})
 
 # Set the entry point
-super_graph.set_entry_point("supervisor")
+
 supervisor=super_graph.compile()
 # super_graph.py
 
@@ -77,7 +84,7 @@ async def compile_and_run(user_story:str, file_name: list):
         
         # Define the input message and configuration
         input_message = HumanMessage(content=f"{user_story}\nFile: {file_name}")
-        config = {"configurable": {"thread_id": "50"}}
+        config = {"configurable": {"thread_id": "id"}}
        
         # Stream the events asynchronously
         async for event in supervisor.astream_events({"messages": [input_message]}, config, stream_mode="updates", version="v1"):

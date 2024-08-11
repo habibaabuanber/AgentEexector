@@ -1,6 +1,6 @@
 from langgraph.graph import END, StateGraph
 from langchain_core.messages import BaseMessage
-from Agents_langgrapg.backend_agent import backend_agent, backend_supervisor
+from Agents_langgrapg.backend_agent import backend_agent, backend_supervisor,DocumentationSearcher,CodeGenerator,CodeTester
 from helpers.graph_helpers import agent_node
 from typing import TypedDict, List, Annotated
 import operator
@@ -15,6 +15,7 @@ class TeamState(TypedDict):
 
 # Initialize the backend graph
 backend_graph = StateGraph(TeamState)
+# backend = backend_graph.compile()
 
 # Add nodes to the backend graph
 backend_graph.add_node("DocumentationSearcher",
@@ -27,22 +28,19 @@ backend_graph.add_node("supervisor", backend_supervisor)
 # Define the edges between nodes
 # backend_graph.add_edge("supervisor","DocumentationSearcher")
 backend_graph.add_edge("DocumentationSearcher","supervisor")
-# backend_graph.add_edge("DocumentationSearcher","CodeGenerator")
 backend_graph.add_edge("CodeGenerator", "supervisor")
-# backend_graph.add_edge("DocumentationSearcher", "supervisor")
-# backend_graph.add_edge("supervisor","CodeTester")
+print("the codegenerator node was forwarded from the supervisor ")
 backend_graph.add_edge("CodeTester", "supervisor")
 
 # Add conditional edges for routing
-backend_graph.add_conditional_edges(
-    "supervisor", lambda x: x["next"], {
-        "DocumentationSearcher": "DocumentationSearcher",
-        "CodeGenerator": "CodeGenerator",
-        "CodeTester": "CodeTester",
-        "FINISH": END,
-    })
+# backend_graph.add_conditional_edges(
+#     "supervisor", lambda x: x["next"], {
+#         "DocumentationSearcher": "DocumentationSearcher",
+#         "CodeGenerator": "CodeGenerator",
+#         "CodeTester": "CodeTester",
+#         "FINISH": END,
+#     })
 
 # Set the entry point
 backend_graph.set_entry_point("DocumentationSearcher")
 backend_graph.set_finish_point("CodeTester")
-backend = backend_graph.compile()
