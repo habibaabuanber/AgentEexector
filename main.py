@@ -18,6 +18,9 @@ def get_user_input():
     file_name =   ["Register.js" ,"Register.html"]
     return user_story, file_name
 
+
 if __name__ == "__main__":
+    
     user_story, file_name = get_user_input()
-    asyncio.run(compile_and_run(user_story, file_name))
+    
+    asyncio.run(compile_and_run(user_story, file_name),debug=True)

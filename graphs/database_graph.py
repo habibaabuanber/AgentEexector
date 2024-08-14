@@ -1,44 +1,39 @@
-from langgraph.graph import END, StateGraph
+from langgraph.graph import END, StateGraph , START
 from langchain_core.messages import BaseMessage
-from Agents_langgrapg.database_agent import database_agent, database_supervisor,DocumentationSearcher,CodeGenerator,CodeTester
+from Agents_langgrapg.database_agent import database_agent, database_supervisor,generate_code
+from tools.Search_documentation import search_documentation
+from tools. code_tester import test_code
 from helpers.graph_helpers import agent_node
-from typing import TypedDict, List, Annotated
+from typing import TypedDict, List, Annotated,Optional
 import operator
-
+import functools
 
 # Define the state structure for the database team
-class TeamState(TypedDict):
-    messages: Annotated[List[BaseMessage], operator.add]
-    team_members: List[str]
-    next: str
+class database_team_state(TypedDict):
+    user_story: str
+    guidelines: Optional[str]
+    templates: Optional[str]
+    generated_code: Optional[str]
+    test_results: Optional[str]
+    is_syntax_correct: Optional[bool]
 
 
 # Initialize the database graph
-database_graph = StateGraph(TeamState)
+database_graph = StateGraph(database_team_state)
 # database=database_graph.compile()
+
+
 # Add nodes to the database graph
-database_graph.add_node("DocumentationSearcher",
-                        agent_node(database_agent, DocumentationSearcher))
-database_graph.add_node("CodeGenerator",
-                        agent_node(database_agent, CodeGenerator))
-database_graph.add_node("CodeTester", agent_node(database_agent, CodeTester))
-database_graph.add_node("supervisor", database_supervisor)
+database_graph.add_node("search_documentation", lambda state: search_documentation(state["user_story"]))
+database_graph.add_node("generate_code", lambda state: generate_code(state["guidelines"], state["templates"]))
+database_graph.add_node("test_code", lambda state: test_code(state["generated_code"]))
+
 
 # Define the edges between nodes
-# database_graph.add_edge("supervisor","DocumentationSearcher")
-database_graph.add_edge("DocumentationSearcher","supervisor")
-database_graph.add_edge("CodeGenerator", "supervisor")
-# database_graph.add_edge("DocumentationSearcher", "supervisor")
-database_graph.add_edge("CodeTester", "supervisor")
+database_graph.add_edge(START , "search_documentation")
+database_graph.add_edge("search_documentation","generate_code")
+database_graph.add_edge("generate_code", "test_code")
+database_graph.add_edge("test_code", END)
 
-# Add conditional edges for routing
-# database_graph.add_conditional_edges(
-#     "supervisor", lambda x: x["next"], {
-#         "DocumentationSearcher": "DocumentationSearcher",
-#         "CodeGenerator": "CodeGenerator",
-#         "CodeTester": "CodeTester",
-#         "FINISH": END,
-#     })
 
-# Set the entry point
-database_graph.set_entry_point("supervisor")
+DatabaseTeam_graph=database_graph.compile()

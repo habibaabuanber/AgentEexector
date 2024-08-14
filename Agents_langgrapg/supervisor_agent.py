@@ -19,25 +19,25 @@ supervisor_prompt = (
     "make sure that the team responded with the full code of the file passed to them"
     "Make sure using Markdown formatting to display the output "
     "When finished, respond with FINISH.")
-# supervisor_agent = create_team_supervisor(
-#     llm, supervisor_prompt, ["FrontendTeam", "BackendTeam", "DatabaseTeam"])
+supervisor_agent = create_team_supervisor(
+    llm, supervisor_prompt, ["FrontendTeam", "BackendTeam", "DatabaseTeam"])
 
-def supervisor_agent(state: dict) -> dict:
-    """Supervises the frontend agent workflow."""
-    messages = state["messages"]
+# def supervisor_agent(state: dict) -> dict:
+#     """Supervises the frontend agent workflow."""
+#     messages = state["messages"]
 
-    # Start with "FrontendTeam"
-    if len(messages) == 1: 
-        return {"next": "FrontendTeam"}
+#     # Start with "FrontendTeam"
+#     if len(messages) == 1: 
+#         return {"next": "FrontendTeam"}
 
-    # Move to "BackendTeam" after "FrontendTeam"
-    elif state.get("next") == "FrontendTeam":
-        return {"next": "BackendTeam"}
+#     # Move to "BackendTeam" after "FrontendTeam"
+#     elif state.get("next") == "FrontendTeam":
+#         return {"next": "BackendTeam"}
 
-    # Finally to "DatabaseTeam", then FINISH
-    elif state.get("next") == "BackendTeam":
-        return {"next": "DatabaseTeam"}
+#     # Finally to "DatabaseTeam", then FINISH
+#     elif state.get("next") == "BackendTeam":
+#         return {"next": "DatabaseTeam"}
     
-    else:
-        return {"next": "FINISH"}
+#     else:
+#         return {"next": "FINISH"}
 
